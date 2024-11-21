@@ -1,0 +1,31 @@
+---
+# Basic Ansible Rulebook Example
+- name: Basic Rulebook for Event-Driven Automation
+  hosts: localhost  # The target hosts for actions
+ 
+  # 1. Define event sources
+  sources:
+    - name: source_name
+      source: ansible.eda.websocket  # Example: WebSocket source
+      # Configuration for the event source
+      configuration:
+        host: "localhost"
+        port: 5000
+ 
+  # 2. Define rules
+  rules:
+    - name: Rule to handle "server_alert" events
+      condition:
+        event.type == "server_alert" and event.priority == "high"
+      action:
+        run_playbook: playbooks/respond_to_alert.yml
+        extra_vars:
+          alert_message: "{{ event.message }}"
+ 
+    - name: Rule to log all "user_activity" events
+      condition:
+        event.type == "user_activity"
+      action:
+        debug: msg="User activity detected: {{ event.data }}"
+ 
+  # Add more rules as needed
